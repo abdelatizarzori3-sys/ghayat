@@ -3,68 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ghayat: Cyber Battle Royale [Mythic Omega v9.0]</title>
+    <title>Ghayat: Cyber Battle Royale - النسخة الكاملة</title>
+    <!-- استدعاء بيئة PyScript لتشغيل بايثون على الويب -->
+    <link rel="stylesheet" href="https://pyscript.net/releases/2024.1.1/core.css">
+    <script type="module" src="https://pyscript.net/releases/2024.1.1/core.js"></script>
     <style>
         body {
-            background-color: #0a0a0c;
+            background-color: #05050a;
             color: #00ffcc;
-            font-family: 'Courier New', Courier, monospace;
+            font-family: 'Courier New', monospace;
             text-align: center;
             padding: 20px;
         }
-        h1 {
-            color: #ff0055;
-            text-shadow: 0 0 10px #ff0055;
-        }
-        .container {
-            max-width: 600px;
-            margin: auto;
-            background: #12121a;
+        h1 { color: #ff0055; text-shadow: 0 0 10px #ff0055; }
+        .console-box {
+            background: #10101a;
             border: 2px solid #00ffcc;
-            padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0, 255, 204, 0.3);
+            padding: 15px;
+            max-width: 600px;
+            margin: 20px auto;
+            text-align: left;
+            direction: ltr;
+            height: 200px;
+            overflow-y: auto;
+            color: #00ff99;
         }
-        .btn {
-            display: block;
+        button {
             background: #ff0055;
             color: white;
-            padding: 12px;
-            margin: 10px 0;
-            text-decoration: none;
+            border: none;
+            padding: 12px 25px;
+            font-size: 16px;
             font-weight: bold;
             border-radius: 5px;
-            transition: 0.3s;
+            cursor: pointer;
+            box-shadow: 0 0 10px #ff0055;
+            margin-top: 10px;
         }
-        .btn:hover {
-            background: #00ffcc;
-            color: #0a0a0c;
-            box-shadow: 0 0 15px #00ffcc;
-        }
-        .footer {
-            margin-top: 20px;
-            font-size: 14px;
-            color: #888;
-        }
+        button:hover { background: #00ffcc; color: #000; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>⚡ GHAYAT: CYBER BATTLE ROYALE ⚡</h1>
-        <h3>[Mythic Omega v9.0]</h3>
-        <p>الإصدار الرسمي الضخم على الويب</p>
-        <hr style="border-color: #00ffcc;">
-        
-        <a href="#" class="btn" onclick="alert('جارٍ تحميل ساحة المعركة الأسطورية...')">1. عرض قائمة الأبطال (Roster)</a>
-        <a href="#" class="btn" onclick="alert('البطولة الملحمية قيد التشغيل!')">2. دخول بطولة Mythic Ranked</a>
-        <a href="#" class="btn" onclick="alert('وضع النجاة اللانهائي مفعل!')">3. Endless Survival Mode</a>
-        <a href="#" class="btn" onclick="alert('متجر جواهر بايثون الأسطوري')">4. متجر الجواهر (PayPal Store)</a>
-        <a href="#" class="btn" onclick="alert('لوحة الشرف العالمية - Abdelati Zarzori')">5. لوحة الشرف (Hall of Fame)</a>
 
-        <div class="footer">
-            <p>Creator & Lead Producer: <strong>Abdelati Zarzori</strong></p>
-            <p>© 2026 Ghayat Engine. All Rights Reserved.</p>
-        </div>
+    <h1>⚡ GHAYAT: CYBER BATTLE ROYALE ⚡</h1>
+    <p>[Mythic Omega v9.0 - النسخة الكاملة]</p>
+    <p>Creator & Lead Producer: Abdelati Zarzori</p>
+
+    <!-- منطقة عرض محرك اللعبة الحقيقي -->
+    <div class="console-box" id="output-box">
+        جاري تهيئة محرك غايات السيبراني... انتظر تحميل النظام...
     </div>
+
+    <button py-click="start_game">بدء المعركة الكاملة</button>
+
+    <!-- كود بايثون الحقيقي الذي يعمل داخل المتصفح -->
+    <py-script>
+        from js import document
+        import random
+
+        def start_game(event):
+            heroes = ["الظل السيبراني", "قناص الأوميغا", "مقاتل النيون", "حارس الخوارزميات"]
+            chosen_hero = random.choice(heroes)
+            loot = ["درع بلازما متطور", "سلاح ليزر أسطوري", "حزمة طاقة نانوية"]
+            chosen_loot = random.choice(loot)
+            
+            output = f"""
+--- بداية المعركة السيبرانية ---
+[المطور]: Abdelati Zarzori
+[البطل المختار]: {chosen_hero}
+[تم العثور على]: {chosen_loot}
+[الحالة]: الدخول لساحة الباتل رويال بنجاح... جاري القتال ضد الخصوم!
+النصر قادم يا بطل! 🚀
+            """
+            document.getElementById("output-box").innerText = output
+    </py-script>
+
 </body>
 </html>
+
