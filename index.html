@@ -3,81 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ghayat: Cyber Battle Royale - النسخة الكاملة</title>
-    <!-- استدعاء بيئة PyScript لتشغيل بايثون على الويب -->
-    <link rel="stylesheet" href="https://pyscript.net/releases/2024.1.1/core.css">
-    <script type="module" src="https://pyscript.net/releases/2024.1.1/core.js"></script>
+    <title>Ghayat: Cyber Battle Royale - 3D Engine</title>
     <style>
         body {
+            margin: 0;
             background-color: #05050a;
             color: #00ffcc;
             font-family: 'Courier New', monospace;
+            overflow: hidden;
             text-align: center;
-            padding: 20px;
         }
-        h1 { color: #ff0055; text-shadow: 0 0 10px #ff0055; }
-        .console-box {
-            background: #10101a;
-            border: 2px solid #00ffcc;
-            border-radius: 10px;
-            padding: 15px;
-            max-width: 600px;
-            margin: 20px auto;
-            text-align: left;
-            direction: ltr;
-            height: 200px;
-            overflow-y: auto;
-            color: #00ff99;
+        #hud {
+            position: absolute;
+            top: 10px;
+            width: 100%;
+            z-index: 10;
+            pointer-events: none;
         }
-        button {
-            background: #ff0055;
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            font-size: 16px;
-            font-weight: bold;
-            border-radius: 5px;
-            cursor: pointer;
-            box-shadow: 0 0 10px #ff0055;
-            margin-top: 10px;
+        h1 {
+            color: #ff0055;
+            font-size: 22px;
+            text-shadow: 0 0 10px #ff0055;
+            margin: 5px;
         }
-        button:hover { background: #00ffcc; color: #000; }
+        p { margin: 2px; font-size: 14px; }
     </style>
+    <!-- استدعاء مكتبة Three.js للرسومات ثلاثية الأبعاد -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
 
-    <h1>⚡ GHAYAT: CYBER BATTLE ROYALE ⚡</h1>
-    <p>[Mythic Omega v9.0 - النسخة الكاملة]</p>
-    <p>Creator & Lead Producer: Abdelati Zarzori</p>
-
-    <!-- منطقة عرض محرك اللعبة الحقيقي -->
-    <div class="console-box" id="output-box">
-        جاري تهيئة محرك غايات السيبراني... انتظر تحميل النظام...
+    <div id="hud">
+        <h1>⚡ GHAYAT: 3D CYBER BATTLE ROYALE ⚡</h1>
+        <p>Lead Producer: Abdelati Zarzori</p>
+        <p>جاري تشغيل محرك الأبعاد الثلاثية...</p>
     </div>
 
-    <button py-click="start_game">بدء المعركة الكاملة</button>
+    <script>
+        // إعداد المشهد الثلاثي الأبعاد
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x05050a);
 
-    <!-- كود بايثون الحقيقي الذي يعمل داخل المتصفح -->
-    <py-script>
-        from js import document
-        import random
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
 
-        def start_game(event):
-            heroes = ["الظل السيبراني", "قناص الأوميغا", "مقاتل النيون", "حارس الخوارزميات"]
-            chosen_hero = random.choice(heroes)
-            loot = ["درع بلازما متطور", "سلاح ليزر أسطوري", "حزمة طاقة نانوية"]
-            chosen_loot = random.choice(loot)
-            
-            output = f"""
---- بداية المعركة السيبرانية ---
-[المطور]: Abdelati Zarzori
-[البطل المختار]: {chosen_hero}
-[تم العثور على]: {chosen_loot}
-[الحالة]: الدخول لساحة الباتل رويال بنجاح... جاري القتال ضد الخصوم!
-النصر قادم يا بطل! 🚀
-            """
-            document.getElementById("output-box").innerText = output
-    </py-script>
+        // إضافة إضاءة سيبرانية للمشهد
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+        scene.add(ambientLight);
+
+        const pointLight = new THREE.PointLight(0xff0055, 2, 50);
+        pointLight.position.set(0, 5, 5);
+        scene.add(pointLight);
+
+        // إنشاء مجسم البطل السيبراني (مكعب نيون متطور)
+        const geometry = new THREE.BoxGeometry(1.5, 1.5, 1.5);
+        const material = new THREE.MeshStandardMaterial({ 
+            color: 0x00ffcc, 
+            roughness: 0.3, 
+            metalness: 0.8 
+        });
+        const heroCube = new THREE.Mesh(geometry, material);
+        scene.add(heroCube);
+
+        // إنشاء أرضية ساحة المعركة
+        const floorGeo = new THREE.PlaneGeometry(20, 20);
+        const floorMat = new THREE.MeshStandardMaterial({ color: 0x101020, roughness: 0.9 });
+        const floor = new THREE.Mesh(floorGeo, floorMat);
+        floor.rotation.x = -Math.PI / 2;
+        floor.position.y = -1;
+        scene.add(floor);
+
+        camera.position.z = 5;
+        camera.position.y = 1;
+
+        // دالة تحريك العالم والرسومات بشكل مستمر
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // دوران البطل السيبراني لإعطاء مظهر تفاعلي ثلاثي الأبعاد
+            heroCube.rotation.x += 0.01;
+            heroCube.rotation.y += 0.015;
+
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        // التكيف مع حجم الشاشة عند تغيير وضع الهاتف
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
 
 </body>
 </html>
