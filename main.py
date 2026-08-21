@@ -29,7 +29,7 @@ class GhayatBattleEngine:
 
     def log_battle(self, winner_name):
         with open("battle_history.txt", "a") as f:
-            f.write(f"[{datetime.now().strftime('%Y-%m-%d %H:%M')}] Winner: {winner_name}\n")
+            f.write(f"[{datetime.now().strftime('%Y-%m-%d %H:%M-%S')}] Tournament Champion: {winner_name}\n")
 
     def show_history(self):
         print("\n--- BATTLE HISTORY ---")
@@ -43,60 +43,85 @@ class GhayatBattleEngine:
     def menu(self):
         while True:
             print("\n" + "=" * 50)
-            print(" 🌟 GHAYAT: CYBER BATTLE ROYALE ENGINE v5.0 🌟 ")
-            print(" ⚙️ Weapon Upgrades & Progression Active")
+            print(" 🌟 GHAYAT: CYBER BATTLE ROYALE ENGINE v6.0 🌟 ")
+            print(" 🏆 Tournament Bracket & Championship Active")
             print("=" * 50)
-            print("1. View Elite Roster & Tiers")
-            print("2. Play Ranked Match")
+            print("1. View Elite Roster")
+            print("2. Enter Cyber Tournament (Ranked)")
             print("3. View Battle History")
             print("4. Exit Engine")
             print("=" * 50)
             choice = input("Select option (1-4): ")
             if choice == '1': self.show_roster()
-            elif choice == '2': self.play_match()
+            elif choice == '2': self.run_tournament()
             elif choice == '3': self.show_history()
             elif choice == '4': break
 
     def show_roster(self):
         print("\n" + "=" * 50)
-        print(" --- ELITE ROSTER & WEAPON TIERS --- ")
+        print(" --- ELITE ROSTER & TIERS --- ")
         print("=" * 50)
         for char in self.roster:
-            print(f"\n{char.icon} {char.name} [{char.country}]")
-            print(f"    Weapon: {char.weapon} ({char.weapon_tier}) | Level: {char.level}")
-            print(f"    HP: {char.hp} | Shield: {char.shield}")
+            print(f"\n{char.icon} {char.name} [{char.country}] - Tier: {char.weapon_tier} (Lvl {char.level})")
         input("\nPress Enter to return...")
 
-    def play_match(self):
-        print("\nSelect Hero (1-4):")
+    def run_tournament(self):
+        print("\nSelect Your Champion (1-4):")
         for idx, char in enumerate(self.roster, 1): 
-            print(f"{idx}. {char.icon} {char.name} ({char.weapon_tier})")
+            print(f"{idx}. {char.icon} {char.name} ({char.country})")
         try:
             choice = int(input("> "))
             player = self.roster[choice - 1]
-            enemy = random.choice([c for c in self.roster if c != player])
-            print(f"\n⚡ Matching: {player.name} VS {enemy.name}...")
-            time.sleep(1)
-            
-            # محاكاة تعتمد على الـ Level و الـ Tier
-            player_power = player.hp + player.shield + (player.level * 10)
-            enemy_power = enemy.hp + enemy.shield + (enemy.level * 10)
-            
-            if random.randint(1, 100) + (player_power - enemy_power) > 50:
-                winner = player
-                print(f"\n🏆 VICTORY! {player.name} wins the match!")
-                player.level += 1
-                player.weapon_tier = "MK-II" if player.level == 2 else "MK-III (OMEGA)"
-                print(f"⭐ {player.name} upgraded to Level {player.level}! Weapon Tier: {player.weapon_tier}")
-            else:
-                winner = enemy
-                print(f"\n💀 DEFEAT! {enemy.name} overpowered you.")
+        except:
+            print("[!] Invalid selection.")
+            return
 
-            self.log_battle(winner.name)
+        print("\n" + "=" * 50)
+        print(f" 🏆 STARTING CYBER TOURNAMENT: {player.icon} {player.name} 🏆 ")
+        print("=" * 50)
+        time.sleep(1)
+
+        # نصف النهائي (Semifinals)
+        semi_opponents = [c for c in self.roster if c != player]
+        semi_enemy = random.choice(semi_opponents)
+        
+        print(f"\n--- SEMIFINALS: {player.name} VS {semi_enemy.name} ---")
+        input("Press Enter to fight Semifinals...")
+        
+        p_power = player.hp + player.shield + (player.level * 15)
+        e_power = semi_enemy.hp + semi_enemy.shield + (semi_enemy.level * 15)
+        
+        if random.randint(1, 100) + (p_power - e_power) > 45:
+            print(f"🔥 {player.name} wins the Semifinals with a stunning {player.skill}!")
+        else:
+            print(f"💀 DEFEAT in Semifinals! {semi_enemy.name} knocked you out of the tournament.")
             input("\nPress Enter to return...")
-        except Exception as e:
-            print(f"[!] Invalid selection: {e}")
-            input("Press Enter...")
+            return
+
+        time.sleep(1)
+
+        # النهائي الكبير (Grand Finale)
+        remaining_pool = [c for c in semi_opponents if c != semi_enemy]
+        final_enemy = random.choice(remaining_pool)
+        
+        print(f"\n" + "=" * 40)
+        print(f" 🌟 GRAND FINALE: {player.name} VS {final_enemy.name} 🌟 ")
+        print("=" * 40)
+        input("Press Enter for the Ultimate Final Battle...")
+
+        p_power_final = player.hp + player.shield + (player.level * 20)
+        f_power_final = final_enemy.hp + final_enemy.shield + (final_enemy.level * 20)
+
+        if random.randint(1, 100) + (p_power_final - f_power_final) > 40:
+            print(f"\n👑 LEGENDARY VICTORY! {player.name} is crowned the Grand Champion of Ghayat!")
+            player.level += 1
+            player.weapon_tier = "MK-III (OMEGA APEX)"
+            self.log_battle(f"{player.name} (Tournament Champion)")
+        else:
+            print(f"\n💔 HEARTBREAK IN THE FINALE! {final_enemy.name} clutched the victory at the last second.")
+            self.log_battle(f"{final_enemy.name} (Defeated {player.name} in Finals)")
+
+        input("\nPress Enter to return to main menu...")
 
 if __name__ == "__main__":
     GhayatBattleEngine().menu()
