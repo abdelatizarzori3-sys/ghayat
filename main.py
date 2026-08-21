@@ -64,10 +64,10 @@ class GhayatBattleEngine:
         while True:
             print("\n" * 2)
             print("=" * 50)
-            print(" 🌟 GHAYAT: CYBER BATTLE ROYALE ENGINE v2.0 🌟 ")
+            print(" 🌟 GHAYAT: CYBER BATTLE ROYALE ENGINE v3.0 🌟 ")
             print("=" * 50)
             print("1. View Elite Roster & Stats")
-            print("2. Play Interactive Match (Select Hero)")
+            print("2. Play Interactive Match (With Cyber Events)")
             print("3. Exit Engine")
             print("=" * 50)
             choice = input("Select option (1-3): ")
@@ -114,16 +114,14 @@ class GhayatBattleEngine:
             print("[!] Please enter a valid number.")
             return
 
-        # اختيار الخصم عشوائياً من الباقين
         opponents = [c for c in self.roster if c != player]
         enemy = random.choice(opponents)
 
         print("\n" + "=" * 50)
-        print(f" ⚔️ BATTLE START: {player.icon} {player.name} VS {enemy.icon} {enemy.name} ⚔️ ")
+        print(f" ⚔️ ARENA ENGAGEMENT: {player.icon} {player.name} VS {enemy.icon} {enemy.name} ⚔️ ")
         print("=" * 50)
         time.sleep(1)
 
-        # إعادة تعيين الصحة للحفاظ على نظافة القتال
         p_hp, p_sh = player.hp, player.shield
         e_hp, e_sh = enemy.hp, enemy.shield
 
@@ -135,6 +133,19 @@ class GhayatBattleEngine:
             
             input("Press Enter to execute attack round...")
             
+            # حدث عشوائي محتمل بنسبة 30% أثناء الجولة
+            event_chance = random.random()
+            if event_chance < 0.25:
+                print("\n⚡ [ALERT: EMP STORM DETECTED ACROSS THE ARENA!] ⚡")
+                emp_damage = 15
+                e_sh = max(0, e_sh - emp_damage)
+                print(f"   The storm disrupts {enemy.name}, draining {emp_damage} shield points!\n")
+            elif event_chance < 0.45:
+                print("\n📦 [TACTICAL AIRDROP DEPLOYED!] 📦")
+                heal_boost = 20
+                p_hp = min(player.max_hp, p_hp + heal_boost)
+                print(f"   You secured medical supplies, restoring {heal_boost} HP!\n")
+
             # دور اللاعب
             dmg_to_enemy = random.randint(25, 45)
             print(f"🔥 You strike {enemy.name} with {player.weapon} for {dmg_to_enemy} damage!")
