@@ -17,6 +17,7 @@ class EliteCharacter:
         self.icon = icon
         self.level = 1
         self.weapon_tier = "MK-I"
+        self.credits = 100
 
 class GhayatBattleEngine:
     def __init__(self):
@@ -33,52 +34,76 @@ class GhayatBattleEngine:
 
     def show_history(self):
         print("\n" + "=" * 50)
-        print(" 📜 GHAYAT: HALL OF FAME & HISTORY 📜 ")
+        print(" 📜 GHAYAT GLOBAL HALL OF FAME 📜 ")
         print("=" * 50)
         try:
             with open("battle_history.txt", "r") as f:
                 print(f.read())
         except FileNotFoundError:
-            print("[!] No combat logs recorded in the mainframe yet.")
+            print("[!] No records found in the mainframe.")
         input("\nPress Enter to return...")
+
+    def black_market(self, player):
+        print("\n" + "=" * 50)
+        print(f" 🛍️ CYBER BLACK MARKET (Credits: {player.credits}) 🛍️ ")
+        print("=" * 50)
+        print("1. Upgrade Weapon Tier [Cost: 50 Credits]")
+        print("2. Repair Shield & HP Boost [Cost: 40 Credits]")
+        print("3. Exit Market")
+        choice = input("Select option (1-3): ")
+        
+        if choice == '1' and player.credits >= 50:
+            player.credits -= 50
+            player.weapon_tier = "MK-III OMEGA APEX"
+            print(f"✨ Success! Your weapon tier is now {player.weapon_tier}!")
+        elif choice == '2' and player.credits >= 40:
+            player.credits -= 40
+            player.hp = int(player.hp * 1.2)
+            player.shield = int(player.shield * 1.2)
+            print("✨ Success! Operator stats boosted permanently!")
+        else:
+            print("[!] Insufficient credits or invalid option.")
+        input("\nPress Enter...")
 
     def menu(self):
         while True:
             print("\n" * 2)
-            print("=" * 55)
-            print(" 🌟 GHAYAT: CYBER BATTLE ROYALE ENGINE [OMEGA v7.0] 🌟 ")
-            print("=" * 55)
+            print("=" * 60)
+            print(" 🌟 GHAYAT: CYBER BATTLE ROYALE ENGINE [SYNDICATE v8.0 ALL-IN] 🌟 ")
+            print("=" * 60)
             print("1. View Elite Roster & Arsenal")
-            print("2. Enter Cyber Tournament (Ranked Bracket)")
-            print("3. Endless Survival Wave Mode (New!)")
-            print("4. View Hall of Fame (Battle History)")
-            print("5. Terminate Engine")
-            print("=" * 55)
-            choice = input("Select option (1-5): ")
+            print("2. Enter Ranked Cyber Tournament")
+            print("3. Endless Survival Wave Mode")
+            print("4. Access Cyber Black Market & Upgrades")
+            print("5. View Global Hall of Fame (History)")
+            print("6. Terminate Engine")
+            print("=" * 60)
+            choice = input("Select option (1-6): ")
             
             if choice == '1': self.show_roster()
             elif choice == '2': self.run_tournament()
             elif choice == '3': self.run_survival_mode()
-            elif choice == '4': self.show_history()
-            elif choice == '5':
-                print("\nShutting down mainframe. Stay lethal, Operator! 🚀")
+            elif choice == '4': 
+                print("\nSelect Operator to access Black Market:")
+                for idx, c in enumerate(self.roster, 1): print(f"{idx}. {c.name}")
+                try: self.black_market(self.roster[int(input("> ")) - 1])
+                except: print("[!] Invalid selection.")
+            elif choice == '5': self.show_history()
+            elif choice == '6':
+                print("\nShutting down syndicate mainframe. Stay lethal! 🚀")
                 break
             else:
-                print("\n[!] Invalid command sequence.")
+                print("\n[!] Invalid input sequence.")
 
     def show_roster(self):
         print("\n" + "=" * 50)
-        print(" --- ELITE ROSTER & GLOBAL OPERATIVES --- ")
+        print(" --- SYNDICATE ELITE ROSTER --- ")
         print("=" * 50)
         for char in self.roster:
             print(f"\n{char.icon} {char.name} | Region: {char.country}")
             print(f"    Class: {char.class_type}")
-            print(f"    Base Stats -> HP: {char.hp} | Shield: {char.shield}")
-            print(f"    Arsenal: {char.weapon} ({char.weapon_tier})")
-            print(f"    Tactical Skill: {char.skill}")
-            print("    ASCII Signature:")
-            for line in char.ascii_render:
-                print(f"    {line}")
+            print(f"    HP: {char.hp} | Shield: {char.shield} | Credits: {char.credits}")
+            print(f"    Weapon: {char.weapon} ({char.weapon_tier})")
             print("-" * 40)
         input("\nPress Enter to return...")
 
@@ -87,22 +112,22 @@ class GhayatBattleEngine:
         for idx, char in enumerate(self.roster, 1): 
             print(f"{idx}. {char.icon} {char.name} [{char.country}]")
         try:
-            choice = int(input("> "))
-            player = self.roster[choice - 1]
+            player = self.roster[int(input("> ")) - 1]
         except:
             print("[!] Invalid selection.")
             return
 
-        print(f"\n[+] Initializing Tournament Bracket for {player.name}...")
+        print(f"\n[+] Initializing Syndicate Tournament for {player.name}...")
         time.sleep(1)
 
         # Semifinals
         semi_enemy = random.choice([c for c in self.roster if c != player])
         print(f"\n⚔️ SEMIFINALS: {player.name} VS {semi_enemy.name}")
-        input("Press Enter to simulate Semifinals...")
+        input("Press Enter to fight...")
         
-        if (player.hp + player.shield) >= random.randint(80, 150):
-            print(f"🔥 Victory in Semifinals! {player.name} advances to the Grand Finale.")
+        if (player.hp + player.shield) >= random.randint(70, 140):
+            print(f"🔥 Victory in Semifinals! Advancing to Grand Finale.")
+            player.credits += 30
         else:
             print(f"💀 Eliminated in Semifinals by {semi_enemy.name}.")
             self.log_battle(f"Tournament Loss: {player.name} knocked out by {semi_enemy.name}")
@@ -115,26 +140,26 @@ class GhayatBattleEngine:
         print(f"\n👑 GRAND FINALE: {player.name} VS {final_enemy.name}")
         input("Press Enter for the Ultimate Showdown...")
 
-        if random.random() > 0.35:
-            print(f"\n🏆 LEGENDARY CHAMPIONSHIP! {player.name} claims ultimate glory in Ghayat!")
+        if random.random() > 0.3:
+            print(f"\n🏆 LEGENDARY CHAMPIONSHIP! {player.name} claims the Syndicate Crown!")
             player.level += 1
-            player.weapon_tier = "MK-III OMEGA"
-            self.log_battle(f"CHAMPION: {player.name} won the Omega Tournament!")
+            player.credits += 100
+            player.weapon_tier = "MK-III OMEGA APEX"
+            self.log_battle(f"CHAMPION: {player.name} won the Syndicate Tournament (+100 Credits)")
         else:
-            print(f"\n💔 Heartbreak! {final_enemy.name} stole the championship at the wire.")
+            print(f"\n💔 Heartbreak! {final_enemy.name} snatched victory at the wire.")
             self.log_battle(f"Runner-Up: {player.name} lost the Final to {final_enemy.name}")
 
         input("\nPress Enter to return...")
 
     def run_survival_mode(self):
         print("\n" + "=" * 50)
-        print(" 💀 ENDLESS SURVIVAL WAVE MODE 💀 ")
+        print(" 💀 SURVIVAL WAVE MODE (ALL-IN) 💀 ")
         print("=" * 50)
         for idx, char in enumerate(self.roster, 1): 
             print(f"{idx}. {char.icon} {char.name}")
         try:
-            choice = int(input("Select Operator for Survival > "))
-            player = self.roster[choice - 1]
+            player = self.roster[int(input("Select Operator > ")) - 1]
         except:
             print("[!] Invalid input.")
             return
@@ -148,19 +173,22 @@ class GhayatBattleEngine:
             enemy = random.choice(self.roster)
             print(f"Incoming Hostile: {enemy.name}")
             
-            damage_taken = random.randint(20, 50)
-            current_hp -= damage_taken
+            damage = random.randint(15, 45)
+            current_hp -= damage
             
             if current_hp <= 0:
                 print(f"💀 Overwhelmed at Wave {wave}!")
-                self.log_battle(f"Survival Mode: {player.name} survived {wave} waves.")
+                earned = wave * 10
+                player.credits += earned
+                print(f"💰 Earned {earned} credits from survival run.")
+                self.log_battle(f"Survival Mode: {player.name} cleared {wave} waves.")
                 break
             else:
-                print(f"✅ Wave {wave} cleared! Remaining Integrity: {current_hp}")
+                print(f"✅ Wave {wave} cleared! Integrity: {current_hp}")
                 wave += 1
-            time.sleep(0.8)
+            time.sleep(0.5)
 
-        input("\nPress Enter to return to main menu...")
+        input("\nPress Enter to return...")
 
 if __name__ == "__main__":
     GhayatBattleEngine().menu()
