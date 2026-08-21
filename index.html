@@ -2,30 +2,65 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>Ghayat: Cyber Hero Mode</title>
-    <style>body { margin: 0; background: #000; overflow: hidden; } #hud { position: absolute; color: #0ff; font-family: monospace; top: 10px; left: 10px; }</style>
+    <title>Ghayat: Cyber Battle Royale - Arena</title>
+    <style>
+        body { margin: 0; background: #020205; overflow: hidden; }
+        #hud { 
+            position: absolute; 
+            color: #00ffcc; 
+            font-family: 'Courier New', monospace; 
+            top: 15px; 
+            right: 15px; 
+            text-align: left;
+            text-shadow: 0 0 8px #00ffcc;
+            pointer-events: none;
+        }
+        h1 { font-size: 18px; margin: 0; color: #ff0055; text-shadow: 0 0 10px #ff0055; }
+    </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
-    <div id="hud"><h1>غايات: وضع البطل</h1><p>المس الشاشة لتعزيز طاقة البطل!</p></div>
+    <div id="hud">
+        <h1>GHAYAT v9.0</h1>
+        <p>الساحة: قطاع النيون</p>
+        <p>المس الشاشة لزيادة السرعة</p>
+    </div>
     <script>
         const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x020205);
+
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({antialias: true});
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
 
+        // إضاءة ساحة المعركة
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+        scene.add(ambientLight);
+
+        const pointLight = new THREE.PointLight(0xff0055, 3, 50);
+        pointLight.position.set(0, 5, 2);
+        scene.add(pointLight);
+
+        // إضافة أرضية شبكية نيون (Grid)
+        const gridHelper = new THREE.GridHelper(30, 30, 0xff0055, 0x00ffcc);
+        gridHelper.position.y = -1.5;
+        scene.add(gridHelper);
+
+        // بطل اللعبة
         const group = new THREE.Group();
-        const body = new THREE.Mesh(new THREE.BoxGeometry(1, 1.5, 0.5), new THREE.MeshNormalMaterial());
-        const head = new THREE.Mesh(new THREE.SphereGeometry(0.4), new THREE.MeshBasicMaterial({color: 0xff0055}));
+        const body = new THREE.Mesh(new THREE.BoxGeometry(1, 1.5, 0.5), new THREE.MeshStandardMaterial({color: 0x00ffcc, metalness: 0.8, roughness: 0.2}));
+        const head = new THREE.Mesh(new THREE.SphereGeometry(0.4), new THREE.MeshStandardMaterial({color: 0xff0055, emissive: 0xff0055}));
         head.position.y = 1.2;
-        group.add(body); group.add(head);
+        group.add(body); 
+        group.add(head);
         scene.add(group);
 
-        camera.position.z = 5;
+        camera.position.z = 6;
+        camera.position.y = 1;
 
         let speed = 0.02;
-        window.addEventListener('touchstart', () => { speed = 0.1; });
+        window.addEventListener('touchstart', () => { speed = 0.08; });
         window.addEventListener('touchend', () => { speed = 0.02; });
 
         function animate() {
@@ -34,6 +69,12 @@
             renderer.render(scene, camera);
         }
         animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
     </script>
 </body>
 </html>
