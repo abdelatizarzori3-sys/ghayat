@@ -2,79 +2,45 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>Ghayat: Cyber Battle Royale - Arena</title>
+    <title>Ghayat: Cyber Battle</title>
     <style>
-        body { margin: 0; background: #020205; overflow: hidden; }
-        #hud { 
-            position: absolute; 
-            color: #00ffcc; 
-            font-family: 'Courier New', monospace; 
-            top: 15px; 
-            right: 15px; 
-            text-align: left;
-            text-shadow: 0 0 8px #00ffcc;
-            pointer-events: none;
-        }
-        h1 { font-size: 18px; margin: 0; color: #ff0055; text-shadow: 0 0 10px #ff0055; }
+        body { margin: 0; background: #020205; overflow: hidden; touch-action: none; }
+        #controls { position: absolute; bottom: 20px; width: 100%; display: flex; justify-content: center; gap: 20px; }
+        .btn { width: 80px; height: 80px; background: rgba(0, 255, 204, 0.3); border: 2px solid #00ffcc; border-radius: 50%; color: #fff; font-weight: bold; }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
-    <div id="hud">
-        <h1>GHAYAT v9.0</h1>
-        <p>الساحة: قطاع النيون</p>
-        <p>المس الشاشة لزيادة السرعة</p>
+    <div id="controls">
+        <button class="btn" onclick="move('left')">◀</button>
+        <button class="btn" onclick="move('up')">▲</button>
+        <button class="btn" onclick="move('down')">▼</button>
+        <button class="btn" onclick="move('right')">▶</button>
     </div>
     <script>
         const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x020205);
-
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({antialias: true});
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
 
-        // إضاءة ساحة المعركة
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
-        scene.add(ambientLight);
-
-        const pointLight = new THREE.PointLight(0xff0055, 3, 50);
-        pointLight.position.set(0, 5, 2);
-        scene.add(pointLight);
-
-        // إضافة أرضية شبكية نيون (Grid)
-        const gridHelper = new THREE.GridHelper(30, 30, 0xff0055, 0x00ffcc);
-        gridHelper.position.y = -1.5;
-        scene.add(gridHelper);
-
-        // بطل اللعبة
         const group = new THREE.Group();
-        const body = new THREE.Mesh(new THREE.BoxGeometry(1, 1.5, 0.5), new THREE.MeshStandardMaterial({color: 0x00ffcc, metalness: 0.8, roughness: 0.2}));
-        const head = new THREE.Mesh(new THREE.SphereGeometry(0.4), new THREE.MeshStandardMaterial({color: 0xff0055, emissive: 0xff0055}));
-        head.position.y = 1.2;
-        group.add(body); 
-        group.add(head);
-        scene.add(group);
+        const body = new THREE.Mesh(new THREE.BoxGeometry(1, 1.5, 0.5), new THREE.MeshStandardMaterial({color: 0x00ffcc}));
+        group.add(body); scene.add(group);
+        camera.position.z = 5;
 
-        camera.position.z = 6;
-        camera.position.y = 1;
-
-        let speed = 0.02;
-        window.addEventListener('touchstart', () => { speed = 0.08; });
-        window.addEventListener('touchend', () => { speed = 0.02; });
+        function move(dir) {
+            if(dir == 'left') group.position.x -= 0.5;
+            if(dir == 'right') group.position.x += 0.5;
+            if(dir == 'up') group.position.z -= 0.5;
+            if(dir == 'down') group.position.z += 0.5;
+        }
 
         function animate() {
             requestAnimationFrame(animate);
-            group.rotation.y += speed;
             renderer.render(scene, camera);
         }
         animate();
-
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        });
     </script>
 </body>
 </html>
