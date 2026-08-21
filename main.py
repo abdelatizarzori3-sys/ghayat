@@ -15,6 +15,8 @@ class EliteCharacter:
         self.skill = skill
         self.weapon = weapon
         self.icon = icon
+        self.level = 1
+        self.weapon_tier = "MK-I"
 
 class GhayatBattleEngine:
     def __init__(self):
@@ -41,11 +43,11 @@ class GhayatBattleEngine:
     def menu(self):
         while True:
             print("\n" + "=" * 50)
-            print(" 🌟 GHAYAT: CYBER BATTLE ROYALE ENGINE v4.0 🌟 ")
-            print(" 💾 History Tracking Enabled")
+            print(" 🌟 GHAYAT: CYBER BATTLE ROYALE ENGINE v5.0 🌟 ")
+            print(" ⚙️ Weapon Upgrades & Progression Active")
             print("=" * 50)
-            print("1. View Elite Roster")
-            print("2. Play Match")
+            print("1. View Elite Roster & Tiers")
+            print("2. Play Ranked Match")
             print("3. View Battle History")
             print("4. Exit Engine")
             print("=" * 50)
@@ -56,25 +58,45 @@ class GhayatBattleEngine:
             elif choice == '4': break
 
     def show_roster(self):
+        print("\n" + "=" * 50)
+        print(" --- ELITE ROSTER & WEAPON TIERS --- ")
+        print("=" * 50)
         for char in self.roster:
-            print(f"\n{char.icon} {char.name} | HP: {char.hp} | Shield: {char.shield}")
-        input("\nPress Enter...")
+            print(f"\n{char.icon} {char.name} [{char.country}]")
+            print(f"    Weapon: {char.weapon} ({char.weapon_tier}) | Level: {char.level}")
+            print(f"    HP: {char.hp} | Shield: {char.shield}")
+        input("\nPress Enter to return...")
 
     def play_match(self):
         print("\nSelect Hero (1-4):")
-        for idx, char in enumerate(self.roster, 1): print(f"{idx}. {char.name}")
+        for idx, char in enumerate(self.roster, 1): 
+            print(f"{idx}. {char.icon} {char.name} ({char.weapon_tier})")
         try:
             choice = int(input("> "))
             player = self.roster[choice - 1]
             enemy = random.choice([c for c in self.roster if c != player])
-            print(f"\nBattle: {player.name} VS {enemy.name}")
+            print(f"\n⚡ Matching: {player.name} VS {enemy.name}...")
+            time.sleep(1)
             
-            # محاكاة بسيطة للقتال
-            winner = player if random.random() > 0.4 else enemy
-            print(f"🏆 Winner: {winner.name}!")
+            # محاكاة تعتمد على الـ Level و الـ Tier
+            player_power = player.hp + player.shield + (player.level * 10)
+            enemy_power = enemy.hp + enemy.shield + (enemy.level * 10)
+            
+            if random.randint(1, 100) + (player_power - enemy_power) > 50:
+                winner = player
+                print(f"\n🏆 VICTORY! {player.name} wins the match!")
+                player.level += 1
+                player.weapon_tier = "MK-II" if player.level == 2 else "MK-III (OMEGA)"
+                print(f"⭐ {player.name} upgraded to Level {player.level}! Weapon Tier: {player.weapon_tier}")
+            else:
+                winner = enemy
+                print(f"\n💀 DEFEAT! {enemy.name} overpowered you.")
+
             self.log_battle(winner.name)
-            input("\nPress Enter...")
-        except: print("Invalid!")
+            input("\nPress Enter to return...")
+        except Exception as e:
+            print(f"[!] Invalid selection: {e}")
+            input("Press Enter...")
 
 if __name__ == "__main__":
     GhayatBattleEngine().menu()
