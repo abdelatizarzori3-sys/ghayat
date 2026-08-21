@@ -2,103 +2,39 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ghayat: Cyber Battle Royale - 3D Engine</title>
-    <style>
-        body {
-            margin: 0;
-            background-color: #05050a;
-            color: #00ffcc;
-            font-family: 'Courier New', monospace;
-            overflow: hidden;
-            text-align: center;
-        }
-        #hud {
-            position: absolute;
-            top: 10px;
-            width: 100%;
-            z-index: 10;
-            pointer-events: none;
-        }
-        h1 {
-            color: #ff0055;
-            font-size: 22px;
-            text-shadow: 0 0 10px #ff0055;
-            margin: 5px;
-        }
-        p { margin: 2px; font-size: 14px; }
-    </style>
-    <!-- استدعاء مكتبة Three.js للرسومات ثلاثية الأبعاد -->
+    <title>Ghayat: Cyber Hero Mode</title>
+    <style>body { margin: 0; background: #000; overflow: hidden; } #hud { position: absolute; color: #0ff; font-family: monospace; top: 10px; left: 10px; }</style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
-
-    <div id="hud">
-        <h1>⚡ GHAYAT: 3D CYBER BATTLE ROYALE ⚡</h1>
-        <p>Lead Producer: Abdelati Zarzori</p>
-        <p>جاري تشغيل محرك الأبعاد الثلاثية...</p>
-    </div>
-
+    <div id="hud"><h1>غايات: وضع البطل</h1><p>المس الشاشة لتعزيز طاقة البطل!</p></div>
     <script>
-        // إعداد المشهد الثلاثي الأبعاد
         const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x05050a);
-
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({antialias: true});
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
 
-        // إضافة إضاءة سيبرانية للمشهد
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
-        scene.add(ambientLight);
-
-        const pointLight = new THREE.PointLight(0xff0055, 2, 50);
-        pointLight.position.set(0, 5, 5);
-        scene.add(pointLight);
-
-        // إنشاء مجسم البطل السيبراني (مكعب نيون متطور)
-        const geometry = new THREE.BoxGeometry(1.5, 1.5, 1.5);
-        const material = new THREE.MeshStandardMaterial({ 
-            color: 0x00ffcc, 
-            roughness: 0.3, 
-            metalness: 0.8 
-        });
-        const heroCube = new THREE.Mesh(geometry, material);
-        scene.add(heroCube);
-
-        // إنشاء أرضية ساحة المعركة
-        const floorGeo = new THREE.PlaneGeometry(20, 20);
-        const floorMat = new THREE.MeshStandardMaterial({ color: 0x101020, roughness: 0.9 });
-        const floor = new THREE.Mesh(floorGeo, floorMat);
-        floor.rotation.x = -Math.PI / 2;
-        floor.position.y = -1;
-        scene.add(floor);
+        const group = new THREE.Group();
+        const body = new THREE.Mesh(new THREE.BoxGeometry(1, 1.5, 0.5), new THREE.MeshNormalMaterial());
+        const head = new THREE.Mesh(new THREE.SphereGeometry(0.4), new THREE.MeshBasicMaterial({color: 0xff0055}));
+        head.position.y = 1.2;
+        group.add(body); group.add(head);
+        scene.add(group);
 
         camera.position.z = 5;
-        camera.position.y = 1;
 
-        // دالة تحريك العالم والرسومات بشكل مستمر
+        let speed = 0.02;
+        window.addEventListener('touchstart', () => { speed = 0.1; });
+        window.addEventListener('touchend', () => { speed = 0.02; });
+
         function animate() {
             requestAnimationFrame(animate);
-
-            // دوران البطل السيبراني لإعطاء مظهر تفاعلي ثلاثي الأبعاد
-            heroCube.rotation.x += 0.01;
-            heroCube.rotation.y += 0.015;
-
+            group.rotation.y += speed;
             renderer.render(scene, camera);
         }
-
         animate();
-
-        // التكيف مع حجم الشاشة عند تغيير وضع الهاتف
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        });
     </script>
-
 </body>
 </html>
 
