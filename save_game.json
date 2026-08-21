@@ -1,0 +1,9 @@
+{
+    "name": "CyberKnight",
+    "hp": 80,
+    "credits": 800,
+    "inventory": [
+        "Cyber_Relic_Lvl1",
+        "Cyber_Relic_Lvl3"
+    ]
+}
